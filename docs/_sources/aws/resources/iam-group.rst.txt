@@ -22,6 +22,8 @@ Filters
   
   - :ref:`has-inline-policy <aws.iam-group.filters.has-inline-policy>`
 
+  - :ref:`has-specific-managed-policy <aws.iam-group.filters.has-specific-managed-policy>`
+
   - :ref:`has-users <aws.iam-group.filters.has-users>`
 
   - :ref:`json-diff <aws.iam-group.filters.json-diff>`
@@ -77,6 +79,50 @@ False: Filter all groups that do not have an inline-policy attached
 
 
 Permissions - iam:ListGroupPolicies
+
+
+.. _aws.iam-group.filters.has-specific-managed-policy:
+
+has-specific-managed-policy
++++++++++++++++++++++++++++
+Filter IAM groups that have a specific policy attached
+
+For example, if the user wants to check all groups with 'admin-policy':
+
+:example:
+
+.. code-block:: yaml
+
+    policies:
+      - name: iam-groups-have-admin
+        resource: iam-group
+        filters:
+          - type: has-specific-managed-policy
+            value: admin-policy
+
+.. container:: toggle
+
+  
+
+  .. raw:: html
+     
+    <div class="header docutils container" style=""></div>
+
+  .. code-block:: yaml
+
+    properties:
+      type:
+        enum:
+        - has-specific-managed-policy
+      value:
+        type: string
+    required:
+    - type
+
+
+
+
+Permissions - iam:ListAttachedGroupPolicies
 
 
 .. _aws.iam-group.filters.has-users:
@@ -174,6 +220,8 @@ Actions
 
   - :ref:`delete <aws.iam-group.actions.delete>`
 
+  - :ref:`delete-inline-policies <aws.iam-group.actions.delete-inline-policies>`
+
   - :ref:`invoke-lambda <aws.common.actions.invoke-lambda>`
   
   - :ref:`invoke-sfn <aws.common.actions.invoke-sfn>`
@@ -236,4 +284,46 @@ For example, if you want to delete a group named 'test'.
 
 
 Permissions - iam:DeleteGroup, iam:RemoveUserFromGroup
+
+
+.. _aws.iam-group.actions.delete-inline-policies:
+
+delete-inline-policies
+++++++++++++++++++++++
+Delete inline policies embedded in an IAM group.
+
+:example:
+
+  .. code-block:: yaml
+
+    - name: iam-delete-group-policies
+      resource: aws.iam-group
+      filters:
+        - type: value
+          key: GroupName
+          value: test
+      actions:
+        - type: delete-inline-policies
+
+.. container:: toggle
+
+  
+
+  .. raw:: html
+     
+    <div class="header docutils container" style=""></div>
+
+  .. code-block:: yaml
+
+    properties:
+      type:
+        enum:
+        - delete-inline-policies
+    required:
+    - type
+
+
+
+
+Permissions - iam:ListGroupPolicies, iam:DeleteGroupPolicy
 

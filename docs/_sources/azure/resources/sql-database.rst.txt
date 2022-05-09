@@ -7,7 +7,7 @@ azure.sql-database
 
 SQL Server Database Resource
 
-The ``azure.sqldatabase`` resource is a child resource of the SQL Server resource,
+The ``azure.sql-database`` resource is a child resource of the SQL Server resource,
 and the SQL Server parent id is available as the ``c7n:parent-id`` property.
 
 :example:
@@ -18,7 +18,7 @@ Finds all SQL Servers Database in the subscription.
 
     policies:
         - name: find-all-sql-databases
-          resource: azure.sqldatabase
+          resource: azure.sql-database
 
 
 Filters
@@ -27,6 +27,8 @@ Filters
 
   - :ref:`cost <azure.common.filters.cost>`
   
+  - :ref:`data-masking-policy <azure.sql-database.filters.data-masking-policy>`
+
   - :ref:`diagnostic-settings <azure.common.filters.diagnostic-settings>`
   
   - :ref:`event <azure.common.filters.event>`
@@ -49,8 +51,58 @@ Filters
   
   - :ref:`short-term-backup-retention-policy <azure.sql-database.filters.short-term-backup-retention-policy>`
 
+  - :ref:`transparent-data-encryption <azure.sql-database.filters.transparent-data-encryption>`
+
   - :ref:`value <azure.common.filters.value>`
   
+
+
+.. _azure.sql-database.filters.data-masking-policy:
+
+data-masking-policy
++++++++++++++++++++
+Filter by the current data masking policy
+configuration for this database.
+
+This filter will exclude the `master` database
+because data masking can not be configured on it.
+
+:example:
+
+Find SQL databases with data masking disabled
+
+.. code-block:: yaml
+
+    policies:
+      - name: sql-database-masking
+        resource: azure.sql-database
+        filters:
+          - type: data-masking-policy
+            enabled: false
+
+.. container:: toggle
+
+  
+
+  .. raw:: html
+     
+    <div class="header docutils container" style=""></div>
+
+  .. code-block:: yaml
+
+    properties:
+      enabled:
+        type: boolean
+      type:
+        enum:
+        - data-masking-policy
+    required:
+    - type
+    - enabled
+    - type
+
+
+
 
 
 .. _azure.sql-database.filters.long-term-backup-retention-policy:
@@ -191,6 +243,51 @@ Find all SQL Databases with a short term retention policy shorter than 2 weeks.
         - short-term-backup-retention
     required:
     - retention-period-days
+    - type
+
+
+
+
+
+.. _azure.sql-database.filters.transparent-data-encryption:
+
+transparent-data-encryption
++++++++++++++++++++++++++++
+Filter by the current Transparent Data Encryption
+configuration for this database.
+
+:example:
+
+Find SQL databases with TDE disabled
+
+.. code-block:: yaml
+
+    policies:
+      - name: sql-database-no-tde
+        resource: azure.sql-database
+        filters:
+          - type: transparent-data-encryption
+            enabled: false
+
+.. container:: toggle
+
+  
+
+  .. raw:: html
+     
+    <div class="header docutils container" style=""></div>
+
+  .. code-block:: yaml
+
+    properties:
+      enabled:
+        type: boolean
+      type:
+        enum:
+        - transparent-data-encryption
+    required:
+    - type
+    - enabled
     - type
 
 

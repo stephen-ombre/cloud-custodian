@@ -34,6 +34,8 @@ Filters
 
   - :ref:`value <aws.common.filters.value>`
   
+  - :ref:`volume <aws.ebs-snapshot.filters.volume>`
+
 
 
 .. _aws.ebs-snapshot.filters.age:
@@ -338,6 +340,121 @@ false: snapshot is being used by launch-template, launch-config, or ami.
 
 
 Permissions - autoscaling:DescribeAutoScalingGroups, autoscaling:DescribeLaunchConfigurations, ec2:DescribeImages
+
+
+.. _aws.ebs-snapshot.filters.volume:
+
+volume
+++++++
+Filter EBS snapshots by their volume attributes.
+
+.. code-block:: yaml
+
+    policies:
+      - name: snapshot-with-no-volume
+        description: Find any snapshots that do not have a corresponding volume.
+        resource: aws.ebs-snapshot
+        filters:
+          - type: volume
+            key: VolumeId
+            value: absent
+      - name: find-snapshots-from-volume
+        resource: aws.ebs-snapshot
+        filters:
+          - type: volume
+            key: VolumeId
+            value: vol-foobarbaz
+
+.. container:: toggle
+
+  
+
+  .. raw:: html
+     
+    <div class="header docutils container" style=""></div>
+
+  .. code-block:: yaml
+
+    properties:
+      default:
+        type: object
+      key:
+        type: string
+      op:
+        enum:
+        - eq
+        - equal
+        - ne
+        - not-equal
+        - gt
+        - greater-than
+        - ge
+        - gte
+        - le
+        - lte
+        - lt
+        - less-than
+        - glob
+        - regex
+        - regex-case
+        - in
+        - ni
+        - not-in
+        - contains
+        - difference
+        - intersect
+      type:
+        enum:
+        - volume
+      value:
+        oneOf:
+        - type: array
+        - type: string
+        - type: boolean
+        - type: number
+        - type: 'null'
+      value_from:
+        additionalProperties: 'False'
+        properties:
+          expr:
+            oneOf:
+            - type: integer
+            - type: string
+          format:
+            enum:
+            - csv
+            - json
+            - txt
+            - csv2dict
+          url:
+            type: string
+        required:
+        - url
+        type: object
+      value_regex:
+        type: string
+      value_type:
+        enum:
+        - age
+        - integer
+        - expiration
+        - normalize
+        - size
+        - cidr
+        - cidr_size
+        - swap
+        - resource_count
+        - expr
+        - unique_size
+        - date
+        - version
+    required:
+    - type
+
+
+
+
+Permissions - ec2:DescribeVolumes
 
 
 

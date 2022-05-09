@@ -799,6 +799,8 @@ Note: You can disable filtering of only running instances by setting
     properties:
       default_tz:
         type: string
+      fallback_schedule:
+        type: string
       offhour:
         maximum: 23
         minimum: 0
@@ -912,6 +914,8 @@ Note: You can disable filtering of only stopped instances by setting
 
     properties:
       default_tz:
+        type: string
+      fallback_schedule:
         type: string
       onhour:
         maximum: 23
@@ -1810,7 +1814,7 @@ Require instances to use IMDSv2
      - name: ec2-require-imdsv2
        resource: ec2
        filters:
-         - MetadataOptions.HttpsToken: optional
+         - MetadataOptions.HttpTokens: optional
        actions:
          - type: set-metadata-access
            tokens: required

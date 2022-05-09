@@ -40,6 +40,8 @@ Filters
 
   - :ref:`reduce <aws.common.filters.reduce>`
   
+  - :ref:`ssh-key <aws.iam-user.filters.ssh-key>`
+
   - :ref:`usage <aws.common.filters.usage>`
   
   - :ref:`value <aws.common.filters.value>`
@@ -722,6 +724,120 @@ Filter IAM users based on attached policy values
 Permissions - iam:ListAttachedUserPolicies
 
 
+.. _aws.iam-user.filters.ssh-key:
+
+ssh-key
++++++++
+Filter IAM users based on uploaded SSH public keys
+
+:example:
+
+.. code-block:: yaml
+
+    policies:
+      - name: iam-users-with-old-ssh-keys
+        resource: iam-user
+        filters:
+          - type: ssh-key
+            key: Status
+            value: Active
+          - type: ssh-key
+            key: UploadDate
+            value_type: age
+            value: 90
+
+.. container:: toggle
+
+  
+
+  .. raw:: html
+     
+    <div class="header docutils container" style=""></div>
+
+  .. code-block:: yaml
+
+    properties:
+      default:
+        type: object
+      key:
+        type: string
+      op:
+        enum:
+        - eq
+        - equal
+        - ne
+        - not-equal
+        - gt
+        - greater-than
+        - ge
+        - gte
+        - le
+        - lte
+        - lt
+        - less-than
+        - glob
+        - regex
+        - regex-case
+        - in
+        - ni
+        - not-in
+        - contains
+        - difference
+        - intersect
+      type:
+        enum:
+        - ssh-key
+      value:
+        oneOf:
+        - type: array
+        - type: string
+        - type: boolean
+        - type: number
+        - type: 'null'
+      value_from:
+        additionalProperties: 'False'
+        properties:
+          expr:
+            oneOf:
+            - type: integer
+            - type: string
+          format:
+            enum:
+            - csv
+            - json
+            - txt
+            - csv2dict
+          url:
+            type: string
+        required:
+        - url
+        type: object
+      value_regex:
+        type: string
+      value_type:
+        enum:
+        - age
+        - integer
+        - expiration
+        - normalize
+        - size
+        - cidr
+        - cidr_size
+        - swap
+        - resource_count
+        - expr
+        - unique_size
+        - date
+        - version
+    required:
+    - type
+
+
+
+
+Permissions - iam:ListSSHPublicKeys
+
+
 
 
 Actions
@@ -733,6 +849,8 @@ Actions
   - :ref:`copy-related-tag <aws.common.actions.copy-related-tag>`
   
   - :ref:`delete <aws.iam-user.actions.delete>`
+
+  - :ref:`delete-ssh-keys <aws.iam-user.actions.delete-ssh-keys>`
 
   - :ref:`invoke-lambda <aws.common.actions.invoke-lambda>`
   
@@ -903,6 +1021,50 @@ completely, use the ``delete`` action without specifying ``options``.
 
 
 Permissions - iam:ListAttachedUserPolicies, iam:ListAccessKeys, iam:ListGroupsForUser, iam:ListMFADevices, iam:ListServiceSpecificCredentials, iam:ListSigningCertificates, iam:ListSSHPublicKeys, iam:DeactivateMFADevice, iam:DeleteAccessKey, iam:DeleteLoginProfile, iam:DeleteSigningCertificate, iam:DeleteSSHPublicKey, iam:DeleteUser, iam:DeleteUserPolicy, iam:DetachUserPolicy, iam:RemoveUserFromGroup
+
+
+.. _aws.iam-user.actions.delete-ssh-keys:
+
+delete-ssh-keys
++++++++++++++++
+Delete or disable a user's SSH keys.
+
+For example to delete keys after 90 days:
+
+:example:
+
+    .. code-block:: yaml
+
+     - name: iam-user-delete-ssh-keys
+       resource: iam-user
+       actions:
+         - type: delete-ssh-keys
+
+.. container:: toggle
+
+  
+
+  .. raw:: html
+     
+    <div class="header docutils container" style=""></div>
+
+  .. code-block:: yaml
+
+    properties:
+      disable:
+        type: boolean
+      matched:
+        type: boolean
+      type:
+        enum:
+        - delete-ssh-keys
+    required:
+    - type
+
+
+
+
+Permissions - iam:ListSSHPublicKeys, iam:UpdateSSHPublicKey, iam:DeleteSSHPublicKey
 
 
 .. _aws.iam-user.actions.remove-keys:

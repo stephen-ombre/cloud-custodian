@@ -24,6 +24,8 @@ Filters
   
   - :ref:`reduce <aws.common.filters.reduce>`
   
+  - :ref:`subnet <aws.common.filters.subnet>`
+  
   - :ref:`taggable <aws.ecs-task.filters.taggable>`
 
   - :ref:`task-definition <aws.ecs-task.filters.task-definition>`

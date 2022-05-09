@@ -49,6 +49,38 @@ then it will open port 443
             ports: '443'
 
 
+:example:
+
+This policy will find all NSGs with port 22 opened from 'Any' source
+
+.. code-block:: yaml
+
+     policies:
+       - name: find-ingress-SSH-from-any-source
+         resource: azure.networksecuritygroup
+         filters:
+          - type: ingress
+            ports: '22'
+            access: 'Allow'
+            source: '*'
+
+
+:example:
+
+This policy will find all NSGs with port 8080 enabled to 'Any' destination
+
+.. code-block:: yaml
+
+     policies:
+       - name: find-egress-HTTP-to-any-destination
+         resource: azure.networksecuritygroup
+         filters:
+          - type: egress
+            ports: '8080'
+            access: 'Allow'
+            destination: '*'
+
+
 Filters
 -------
 
@@ -103,6 +135,8 @@ Filter Network Security Groups using opened/closed ports configuration
         - Allow
         - Deny
         type: string
+      destination:
+        type: string
       exceptPorts:
         type: string
       ipProtocol:
@@ -117,6 +151,8 @@ Filter Network Security Groups using opened/closed ports configuration
         - any
         type: string
       ports:
+        type: string
+      source:
         type: string
       type:
         enum:
@@ -150,6 +186,8 @@ Filter Network Security Groups using opened/closed ports configuration
         - Allow
         - Deny
         type: string
+      destination:
+        type: string
       exceptPorts:
         type: string
       ipProtocol:
@@ -164,6 +202,8 @@ Filter Network Security Groups using opened/closed ports configuration
         - any
         type: string
       ports:
+        type: string
+      source:
         type: string
       type:
         enum:

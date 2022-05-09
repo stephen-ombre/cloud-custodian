@@ -32,21 +32,36 @@ Filters
 
 kms-key
 +++++++
-Filter a resource by its associcated kms key and optionally the alias name
+Filter a resource by its associated kms key and optionally the aliasname
 of the kms key by using 'c7n:AliasName'
 
 :example:
 
-.. code-block:: yaml
+Match a specific key alias:
 
-    policies:
-      - name: glue-security-configuration-kms-key
-        resource: glue-security-configuration
-        filters:
-          - type: kms-key
-            key: c7n:AliasName
-            value: "^(alias/aws/)"
-            op: regex
+    .. code-block:: yaml
+
+        policies:
+            - name: dms-encrypt-key-check
+              resource: dms-instance
+              filters:
+                - type: kms-key
+                  key: "c7n:AliasName"
+                  value: alias/aws/dms
+
+Or match against native key attributes such as ``KeyManager``, which
+more explicitly distinguishes between ``AWS`` and ``CUSTOMER``-managed
+keys. The above policy can also be written as:
+
+    .. code-block:: yaml
+
+        policies:
+            - name: dms-aws-managed-key
+              resource: dms-instance
+              filters:
+                - type: kms-key
+                  key: KeyManager
+                  value: AWS
 
 .. container:: toggle
 

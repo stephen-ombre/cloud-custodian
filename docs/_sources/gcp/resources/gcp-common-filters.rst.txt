@@ -6,6 +6,9 @@ GCP Common Filters
 Filters
 
 
+   - :ref:`effective-firewall <GCP.common.filters.effective-firewall>`
+
+
    - :ref:`event <GCP.common.filters.event>`
 
 
@@ -18,8 +21,125 @@ Filters
    - :ref:`reduce <GCP.common.filters.reduce>`
 
 
+   - :ref:`scc-findings <GCP.common.filters.scc-findings>`
+
+
    - :ref:`value <GCP.common.filters.value>`
 
+
+
+
+.. _GCP.common.filters.effective-firewall:
+
+effective-firewall
+++++++++++++++++++
+
+Filters instances by their effective firewall rules.
+See `getEffectiveFirewalls
+<https://cloud.google.com/compute/docs/reference/rest/v1/instances/getEffectiveFirewalls>`_
+for valid fields.
+
+:example:
+
+Filter all instances that have a firewall rule that allows public
+acess
+
+.. code-block:: yaml
+
+    policies:
+       - name: find-publicly-accessable-instances
+         resource: gcp.instance
+         filters:
+         - type: effective-firewall
+           key: firewalls[*].sourceRanges[]
+           op: contains
+           value: "0.0.0.0/0"
+
+.. container:: toggle
+
+  
+
+  .. raw:: html
+     
+    <div class="header docutils container" style=""></div>
+
+  .. code-block:: yaml
+
+    properties:
+      default:
+        type: object
+      key:
+        type: string
+      op:
+        enum:
+        - eq
+        - equal
+        - ne
+        - not-equal
+        - gt
+        - greater-than
+        - ge
+        - gte
+        - le
+        - lte
+        - lt
+        - less-than
+        - glob
+        - regex
+        - regex-case
+        - in
+        - ni
+        - not-in
+        - contains
+        - difference
+        - intersect
+      type:
+        enum:
+        - effective-firewall
+      value:
+        oneOf:
+        - type: array
+        - type: string
+        - type: boolean
+        - type: number
+        - type: 'null'
+      value_from:
+        additionalProperties: 'False'
+        properties:
+          expr:
+            oneOf:
+            - type: integer
+            - type: string
+          format:
+            enum:
+            - csv
+            - json
+            - txt
+            - csv2dict
+          url:
+            type: string
+        required:
+        - url
+        type: object
+      value_regex:
+        type: string
+      value_type:
+        enum:
+        - age
+        - integer
+        - expiration
+        - normalize
+        - size
+        - cidr
+        - cidr_size
+        - swap
+        - resource_count
+        - expr
+        - unique_size
+        - date
+        - version
+    required:
+    - type
 
 
 
@@ -139,6 +259,8 @@ for features and configuration.
     properties:
       default_tz:
         type: string
+      fallback_schedule:
+        type: string
       offhour:
         maximum: 23
         minimum: 0
@@ -204,6 +326,8 @@ for features and configuration.
 
     properties:
       default_tz:
+        type: string
+      fallback_schedule:
         type: string
       onhour:
         maximum: 23
@@ -352,6 +476,114 @@ but no more than 15.
         enum:
         - reduce
     required:
+    - type
+
+
+
+.. _GCP.common.filters.scc-findings:
+
+scc-findings
+++++++++++++
+
+Filters resources based on their Security Command Center (SCC) findings.
+
+.. code-block:: yaml
+
+  - name: bucket-contains-high-finding
+    resource: gcp.bucket
+    filters:
+    - type: scc-findings
+      org: 11111111111111
+      key: severity
+      value: HIGH
+
+.. container:: toggle
+
+  
+
+  .. raw:: html
+     
+    <div class="header docutils container" style=""></div>
+
+  .. code-block:: yaml
+
+    properties:
+      default:
+        type: object
+      key:
+        type: string
+      op:
+        enum:
+        - eq
+        - equal
+        - ne
+        - not-equal
+        - gt
+        - greater-than
+        - ge
+        - gte
+        - le
+        - lte
+        - lt
+        - less-than
+        - glob
+        - regex
+        - regex-case
+        - in
+        - ni
+        - not-in
+        - contains
+        - difference
+        - intersect
+      org:
+        type: integer
+      type:
+        enum:
+        - scc-findings
+      value:
+        oneOf:
+        - type: array
+        - type: string
+        - type: boolean
+        - type: number
+        - type: 'null'
+      value_from:
+        additionalProperties: 'False'
+        properties:
+          expr:
+            oneOf:
+            - type: integer
+            - type: string
+          format:
+            enum:
+            - csv
+            - json
+            - txt
+            - csv2dict
+          url:
+            type: string
+        required:
+        - url
+        type: object
+      value_regex:
+        type: string
+      value_type:
+        enum:
+        - age
+        - integer
+        - expiration
+        - normalize
+        - size
+        - cidr
+        - cidr_size
+        - swap
+        - resource_count
+        - expr
+        - unique_size
+        - date
+        - version
+    required:
+    - org
     - type
 
 

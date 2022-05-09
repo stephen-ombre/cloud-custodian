@@ -343,21 +343,36 @@ Permissions - config:GetResourceConfigHistory
 
 kms-key
 +++++++
-Filter a resource by its associcated kms key and optionally the aliasname
+Filter a resource by its associated kms key and optionally the aliasname
 of the kms key by using 'c7n:AliasName'
 
 :example:
 
+Match a specific key alias:
+
     .. code-block:: yaml
 
         policies:
-            - name: lambda-kms-key-filters
-              resource: aws.lambda
+            - name: dms-encrypt-key-check
+              resource: dms-instance
               filters:
                 - type: kms-key
-                  key: c7n:AliasName
-                  value: "^(alias/aws/lambda)"
-                  op: regex
+                  key: "c7n:AliasName"
+                  value: alias/aws/dms
+
+Or match against native key attributes such as ``KeyManager``, which
+more explicitly distinguishes between ``AWS`` and ``CUSTOMER``-managed
+keys. The above policy can also be written as:
+
+    .. code-block:: yaml
+
+        policies:
+            - name: dms-aws-managed-key
+              resource: dms-instance
+              filters:
+                - type: kms-key
+                  key: KeyManager
+                  value: AWS
 
 .. container:: toggle
 
@@ -591,6 +606,8 @@ Actions
 
   - :ref:`tag <aws.common.actions.tag>`
   
+  - :ref:`trim-versions <aws.lambda.actions.trim-versions>`
+
   - :ref:`webhook <aws.common.actions.webhook>`
   
 
@@ -725,4 +742,67 @@ the resource.
 
 
 Permissions - lambda:DeleteFunctionConcurrency, lambda:PutFunctionConcurrency
+
+
+.. _aws.lambda.actions.trim-versions:
+
+trim-versions
++++++++++++++
+Delete old versions of a function.
+
+By default this will only remove the non $LATEST
+version of a function that are not referenced by
+an alias. Optionally it can delete only versions
+older than a given age.
+
+:example:
+
+  .. code-block:: yaml
+
+     policies:
+       - name: lambda-gc
+         resource: aws.lambda
+         actions:
+           - type: trim-versions
+             exclude-aliases: true  # default true
+             older-than: 60 # default not-set
+             retain-latest: true # default false
+
+retain-latest refers to whether the latest numeric
+version will be retained, the $LATEST alias will
+still point to the last revision even without this set,
+so this is safe wrt to the function availability, its more
+about desire to retain an explicit version of the current
+code, rather than just the $LATEST alias pointer which will
+be automatically updated.
+
+.. container:: toggle
+
+  
+
+  .. raw:: html
+     
+    <div class="header docutils container" style=""></div>
+
+  .. code-block:: yaml
+
+    properties:
+      exclude-aliases:
+        default: true
+        type: boolean
+      older-than:
+        type: number
+      retain-latest:
+        default: true
+        type: boolean
+      type:
+        enum:
+        - trim-versions
+    required:
+    - type
+
+
+
+
+Permissions - lambda:ListAliases, lambda:ListVersionsByFunction, lambda:DeleteFunction
 

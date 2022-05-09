@@ -8,6 +8,8 @@ events resources
    :titlesonly:
 
 
+   event-bus.rst
+
    event-rule.rst
 
    event-rule-target.rst

@@ -168,6 +168,8 @@ Filters
   
   - :ref:`value <azure.common.filters.value>`
   
+  - :ref:`vm-extensions <azure.common.filters.vm-extensions>`
+  
 
 
 .. _azure.vm.filters.network-interface:

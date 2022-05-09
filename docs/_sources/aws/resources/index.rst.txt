@@ -26,6 +26,8 @@ be applies for all resources.
 
    group-apigateway.rst
 
+   group-appflow.rst
+
    group-autoscaling.rst
 
    group-backup.rst
@@ -53,6 +55,8 @@ be applies for all resources.
    group-codebuild.rst
 
    group-codecommit.rst
+
+   group-codedeploy.rst
 
    group-codepipeline.rst
 
@@ -124,6 +128,10 @@ be applies for all resources.
 
    group-kinesisanalytics.rst
 
+   group-kinesisanalyticsv2.rst
+
+   group-kinesisvideo.rst
+
    group-kms.rst
 
    group-lambda.rst
@@ -135,6 +143,10 @@ be applies for all resources.
    group-machinelearning.rst
 
    group-mq.rst
+
+   group-mwaa.rst
+
+   group-network-firewall.rst
 
    group-opsworks.rst
 
@@ -152,6 +164,8 @@ be applies for all resources.
 
    group-s3.rst
 
+   group-s3control.rst
+
    group-sagemaker.rst
 
    group-sdb.rst
@@ -159,6 +173,8 @@ be applies for all resources.
    group-secretsmanager.rst
 
    group-serverlessrepo.rst
+
+   group-service-quotas.rst
 
    group-servicecatalog.rst
 
@@ -177,6 +193,8 @@ be applies for all resources.
    group-storagegateway.rst
 
    group-support.rst
+
+   group-swf.rst
 
    group-waf.rst
 

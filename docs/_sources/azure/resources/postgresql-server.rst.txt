@@ -49,6 +49,8 @@ Filters
   
   - :ref:`event <azure.common.filters.event>`
   
+  - :ref:`firewall-rules <azure.common.filters.firewall-rules>`
+  
   - :ref:`marked-for-op <azure.common.filters.marked-for-op>`
   
   - :ref:`metric <azure.common.filters.metric>`

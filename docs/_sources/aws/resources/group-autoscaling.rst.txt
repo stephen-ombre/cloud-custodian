@@ -11,3 +11,5 @@ autoscaling resources
    asg.rst
 
    launch-config.rst
+
+   scaling-policy.rst

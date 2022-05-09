@@ -911,6 +911,11 @@ Action to modify the policy for an App ELB
         enum:
         - HTTP
         - HTTPS
+        - TCP
+        - TLS
+        - UDP
+        - TCP_UDP
+        - GENEVE
       sslpolicy:
         type: string
       type:

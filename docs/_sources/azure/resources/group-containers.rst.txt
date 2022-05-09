@@ -12,6 +12,6 @@ Containers resources
 
    container-group.rst
 
-   containerregistry.rst
+   container-registry.rst
 
    containerservice.rst

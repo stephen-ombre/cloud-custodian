@@ -13,3 +13,5 @@ iam resources
    project-role.rst
 
    service-account.rst
+
+   service-account-key.rst

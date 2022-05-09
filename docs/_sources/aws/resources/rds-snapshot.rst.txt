@@ -343,6 +343,8 @@ Actions
   
   - :ref:`restore <aws.rds-snapshot.actions.restore>`
 
+  - :ref:`set-permissions <aws.rds-snapshot.actions.set-permissions>`
+
   - :ref:`tag <aws.common.actions.tag>`
   
   - :ref:`webhook <aws.common.actions.webhook>`
@@ -495,4 +497,77 @@ can be specified via `modify_options` settings.
 
 
 Permissions - rds:ModifyDBInstance, rds:ModifyDBParameterGroup, rds:ModifyOptionGroup, rds:RebootDBInstance, rds:RestoreDBInstanceFromDBSnapshot
+
+
+.. _aws.rds-snapshot.actions.set-permissions:
+
+set-permissions
++++++++++++++++
+Set permissions for copying or restoring an RDS snapshot
+
+Use the 'add' and 'remove' parameters to control which accounts to
+add or remove, respectively.  The default is to remove any
+permissions granted to other AWS accounts.
+
+Use `remove: matched` in combination with the `cross-account` filter
+for more flexible removal options such as preserving access for
+a set of whitelisted accounts:
+
+:example:
+
+.. code-block:: yaml
+
+        policies:
+          - name: rds-snapshot-remove-cross-account
+            resource: rds-snapshot
+            filters:
+              - type: cross-account
+                whitelist:
+                  - '112233445566'
+            actions:
+              - type: set-permissions
+                remove: matched
+
+.. container:: toggle
+
+  
+
+  .. raw:: html
+     
+    <div class="header docutils container" style=""></div>
+
+  .. code-block:: yaml
+
+    properties:
+      add:
+        items:
+          oneOf:
+          - maxLength: 12
+            minLength: 12
+            type: string
+          - enum:
+            - all
+        type: array
+      remove:
+        oneOf:
+        - enum:
+          - matched
+        - items:
+            oneOf:
+            - maxLength: 12
+              minLength: 12
+              type: string
+            - enum:
+              - all
+          type: array
+      type:
+        enum:
+        - set-permissions
+    required:
+    - type
+
+
+
+
+Permissions - rds:ModifyDBSnapshotAttribute
 

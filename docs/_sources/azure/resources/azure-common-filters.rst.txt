@@ -6,10 +6,7 @@ Azure Common Filters
 Filters
 
 
-   - :ref:`active-key-name <Azure.common.filters.active-key-name>`
-
-
-   - :ref:`auto-regenerate-key <Azure.common.filters.auto-regenerate-key>`
+   - :ref:`azure-ad-administrators <Azure.common.filters.azure-ad-administrators>`
 
 
    - :ref:`configuration <Azure.common.filters.configuration>`
@@ -19,6 +16,9 @@ Filters
 
 
    - :ref:`diagnostic-settings <Azure.common.filters.diagnostic-settings>`
+
+
+   - :ref:`effective-route-table <Azure.common.filters.effective-route-table>`
 
 
    - :ref:`event <Azure.common.filters.event>`
@@ -54,9 +54,6 @@ Filters
    - :ref:`reduce <Azure.common.filters.reduce>`
 
 
-   - :ref:`regeneration-period <Azure.common.filters.regeneration-period>`
-
-
    - :ref:`resource-lock <Azure.common.filters.resource-lock>`
 
 
@@ -66,31 +63,42 @@ Filters
    - :ref:`value <Azure.common.filters.value>`
 
 
+   - :ref:`vm-extensions <Azure.common.filters.vm-extensions>`
 
 
-.. _Azure.common.filters.active-key-name:
 
-active-key-name
-+++++++++++++++
 
-Filter Key Vault Managed Storage Account Resource on Active Key Name property.
+.. _Azure.common.filters.azure-ad-administrators:
 
-This is ``Value`` based filter, you can provide string ``value`` property.
+azure-ad-administrators
++++++++++++++++++++++++
 
-``value_type`` is always ``normalize``.
+Provides a value filter targetting the Azure AD Administrator of this
+SQL Server.
 
-:example:
+Here is an example of the available fields:
 
-List all Key Vault managed Storage Accounts with Active Key Name key1
+.. code-block:: json
+
+  "administratorType": "ActiveDirectory",
+  "login": "bob@contoso.com",
+  "sid": "00000011-1111-2222-2222-123456789111",
+  "tenantId": "00000011-1111-2222-2222-123456789111",
+  "azureADOnlyAuthentication": true
+
+:examples:
+
+Find SQL Servers without AD Administrator
 
 .. code-block:: yaml
 
     policies:
-      - name: keyvault-storage-active-key-name
-        resource: azure.keyvault-storage
+      - name: sqlserver-no-ad-admin
+        resource: azure.sqlserver
         filters:
-          - type: active-key-name
-            value: key1
+          - type: azure-ad-administrators
+            key: login
+            value: absent
 
 .. container:: toggle
 
@@ -105,11 +113,41 @@ List all Key Vault managed Storage Accounts with Active Key Name key1
     properties:
       default:
         type: object
+      key:
+        type: string
+      op:
+        enum:
+        - eq
+        - equal
+        - ne
+        - not-equal
+        - gt
+        - greater-than
+        - ge
+        - gte
+        - le
+        - lte
+        - lt
+        - less-than
+        - glob
+        - regex
+        - regex-case
+        - in
+        - ni
+        - not-in
+        - contains
+        - difference
+        - intersect
       type:
         enum:
-        - active-key-name
+        - azure-ad-administrators
       value:
-        type: string
+        oneOf:
+        - type: array
+        - type: string
+        - type: boolean
+        - type: number
+        - type: 'null'
       value_from:
         additionalProperties: 'False'
         properties:
@@ -130,72 +168,21 @@ List all Key Vault managed Storage Accounts with Active Key Name key1
         type: object
       value_regex:
         type: string
-    required:
-    - value
-    - type
-
-
-
-.. _Azure.common.filters.auto-regenerate-key:
-
-auto-regenerate-key
-+++++++++++++++++++
-
-Filter Key Vault Managed Storage Account Resource on Auto Regenerate property.
-
-This is ``Value`` based filter, you can provide boolean ``value`` property.
-
-:example:
-
-List all Key Vault managed Storage Accounts with disabled automatic keys regeneration
-
-.. code-block:: yaml
-
-    policies:
-      - name: keyvault-storage-auto-regenerate
-        resource: azure.keyvault-storage
-        filters:
-          - type: auto-regenerate-key
-            value: False
-
-.. container:: toggle
-
-  
-
-  .. raw:: html
-     
-    <div class="header docutils container" style=""></div>
-
-  .. code-block:: yaml
-
-    properties:
-      default:
-        type: object
-      type:
+      value_type:
         enum:
-        - auto-regenerate-key
-      value:
-        type: boolean
-      value_from:
-        additionalProperties: 'False'
-        properties:
-          expr:
-            oneOf:
-            - type: integer
-            - type: string
-          format:
-            enum:
-            - csv
-            - json
-            - txt
-            - csv2dict
-          url:
-            type: string
-        required:
-        - url
-        type: object
-      value_regex:
-        type: string
+        - age
+        - integer
+        - expiration
+        - normalize
+        - size
+        - cidr
+        - cidr_size
+        - swap
+        - resource_count
+        - expr
+        - unique_size
+        - date
+        - version
     required:
     - type
 
@@ -315,13 +302,11 @@ Timeframe options:
 
     - ``WeekToDate``
     - ``MonthToDate``
-    - ``YearToDate``
 
   - All days in the previous calendar period:
 
-    - ``TheLastWeek``
     - ``TheLastMonth``
-    - ``TheLastYear``
+    - ``TheLastBillingMonth``
 
 :examples:
 
@@ -390,12 +375,11 @@ SQL servers that were cost more than 2000 in the last 30 days not including toda
       timeframe:
         oneOf:
         - enum:
-          - WeekToDate
           - MonthToDate
-          - YearToDate
-          - TheLastWeek
+          - BillingMonthToDate
           - TheLastMonth
-          - TheLastYear
+          - TheLastBillingMonth
+          - WeekToDate
         - minimum: 1
           type: number
       type:
@@ -538,6 +522,119 @@ Find KeyVaults that have logs enabled for the AuditEvent category.
       type:
         enum:
         - diagnostic-settings
+      value:
+        oneOf:
+        - type: array
+        - type: string
+        - type: boolean
+        - type: number
+        - type: 'null'
+      value_from:
+        additionalProperties: 'False'
+        properties:
+          expr:
+            oneOf:
+            - type: integer
+            - type: string
+          format:
+            enum:
+            - csv
+            - json
+            - txt
+            - csv2dict
+          url:
+            type: string
+        required:
+        - url
+        type: object
+      value_regex:
+        type: string
+      value_type:
+        enum:
+        - age
+        - integer
+        - expiration
+        - normalize
+        - size
+        - cidr
+        - cidr_size
+        - swap
+        - resource_count
+        - expr
+        - unique_size
+        - date
+        - version
+    required:
+    - type
+
+
+
+.. _Azure.common.filters.effective-route-table:
+
+effective-route-table
++++++++++++++++++++++
+
+Filters network interfaces by the Effective Route Table
+
+:example:
+
+This policy will get Network Interfaces that have VirtualNetworkGateway and VNet hops.
+
+.. code-block:: yaml
+
+    policies:
+      - name: virtual-network-gateway-hop
+        resource: azure.networkinterface
+        filters:
+          - type: effective-route-table
+            key: routes.value[?source == 'User'].nextHopType
+            op: difference
+            value:
+              - Internet
+              - None
+              - VirtualAppliance
+
+.. container:: toggle
+
+  
+
+  .. raw:: html
+     
+    <div class="header docutils container" style=""></div>
+
+  .. code-block:: yaml
+
+    properties:
+      default:
+        type: object
+      key:
+        type: string
+      op:
+        enum:
+        - eq
+        - equal
+        - ne
+        - not-equal
+        - gt
+        - greater-than
+        - ge
+        - gte
+        - le
+        - lte
+        - lt
+        - less-than
+        - glob
+        - regex
+        - regex-case
+        - in
+        - ni
+        - not-in
+        - contains
+        - difference
+        - intersect
+      type:
+        enum:
+        - effective-route-table
       value:
         oneOf:
         - type: array
@@ -1195,6 +1292,8 @@ for features and configuration.
     properties:
       default_tz:
         type: string
+      fallback_schedule:
+        type: string
       offhour:
         maximum: 23
         minimum: 0
@@ -1260,6 +1359,8 @@ for features and configuration.
 
     properties:
       default_tz:
+        type: string
+      fallback_schedule:
         type: string
       onhour:
         maximum: 23
@@ -1507,101 +1608,6 @@ but no more than 15.
       type:
         enum:
         - reduce
-    required:
-    - type
-
-
-
-.. _Azure.common.filters.regeneration-period:
-
-regeneration-period
-+++++++++++++++++++
-
-Filter Key Vault Managed Storage Account Resource on Regeneration Period property.
-
-This is ``Value`` based filter, you can provide any ``value`` and ``op`` properties.
-
-:example:
-
-List all Key Vault managed Storage Accounts with regeneration period not equal to P90D
-
-.. code-block:: yaml
-
-
-    policies:
-      - name: keyvault-storage-regeneration-period
-        resource: azure.keyvault-storage
-        filters:
-          - type: regeneration-period
-            op: ne
-            value: P90D
-
-.. container:: toggle
-
-  
-
-  .. raw:: html
-     
-    <div class="header docutils container" style=""></div>
-
-  .. code-block:: yaml
-
-    properties:
-      default:
-        type: object
-      op:
-        enum:
-        - eq
-        - equal
-        - ne
-        - not-equal
-        - gt
-        - greater-than
-        - ge
-        - gte
-        - le
-        - lte
-        - lt
-        - less-than
-        - glob
-        - regex
-        - regex-case
-        - in
-        - ni
-        - not-in
-        - contains
-        - difference
-        - intersect
-      type:
-        enum:
-        - regeneration-period
-      value:
-        oneOf:
-        - type: array
-        - type: string
-        - type: boolean
-        - type: number
-        - type: 'null'
-      value_from:
-        additionalProperties: 'False'
-        properties:
-          expr:
-            oneOf:
-            - type: integer
-            - type: string
-          format:
-            enum:
-            - csv
-            - json
-            - txt
-            - csv2dict
-          url:
-            type: string
-        required:
-        - url
-        type: object
-      value_regex:
-        type: string
     required:
     - type
 
@@ -1902,6 +1908,161 @@ Generic value filter using jmespath
       type:
         enum:
         - value
+      value:
+        oneOf:
+        - type: array
+        - type: string
+        - type: boolean
+        - type: number
+        - type: 'null'
+      value_from:
+        additionalProperties: 'False'
+        properties:
+          expr:
+            oneOf:
+            - type: integer
+            - type: string
+          format:
+            enum:
+            - csv
+            - json
+            - txt
+            - csv2dict
+          url:
+            type: string
+        required:
+        - url
+        type: object
+      value_regex:
+        type: string
+      value_type:
+        enum:
+        - age
+        - integer
+        - expiration
+        - normalize
+        - size
+        - cidr
+        - cidr_size
+        - swap
+        - resource_count
+        - expr
+        - unique_size
+        - date
+        - version
+    required:
+    - type
+
+
+
+.. _Azure.common.filters.vm-extensions:
+
+vm-extensions
++++++++++++++
+
+Provides a value filter targetting the virtual machine
+extensions array.  Requires an additional API call per
+virtual machine to retrieve the extensions.
+
+Here is an example of the data returned:
+
+.. code-block:: json
+
+  [{
+    "id": "/subscriptions/...",
+    "name": "CustomScript",
+    "type": "Microsoft.Compute/virtualMachines/extensions",
+    "location": "centralus",
+    "properties": {
+      "publisher": "Microsoft.Azure.Extensions",
+      "type": "CustomScript",
+      "typeHandlerVersion": "2.0",
+      "autoUpgradeMinorVersion": true,
+      "settings": {
+        "fileUris": []
+      },
+      "provisioningState": "Succeeded"
+    }
+  }]
+
+:examples:
+
+Find VM's with Custom Script extensions
+
+.. code-block:: yaml
+
+    policies:
+      - name: vm-with-customscript
+        description: |
+          Find all virtual machines with a custom
+          script extension installed.
+        resource: azure.vm
+        filters:
+          - type: vm-extensions
+            op: in
+            key: "[].properties.type"
+            value: CustomScript
+            value_type: swap
+
+
+Find VM's without the OMS agent installed
+
+.. code-block:: yaml
+
+    policies:
+      - name: vm-without-oms
+        description: |
+          Find all virtual machines without the
+          OMS agent installed.
+        resource: azure.vm
+        filters:
+          - type: vm-extensions
+            op: not-in
+            key: "[].properties.type"
+            value: OmsAgentForLinux
+            value_type: swap
+
+.. container:: toggle
+
+  
+
+  .. raw:: html
+     
+    <div class="header docutils container" style=""></div>
+
+  .. code-block:: yaml
+
+    properties:
+      default:
+        type: object
+      key:
+        type: string
+      op:
+        enum:
+        - eq
+        - equal
+        - ne
+        - not-equal
+        - gt
+        - greater-than
+        - ge
+        - gte
+        - le
+        - lte
+        - lt
+        - less-than
+        - glob
+        - regex
+        - regex-case
+        - in
+        - ni
+        - not-in
+        - contains
+        - difference
+        - intersect
+      type:
+        enum:
+        - vm-extensions
       value:
         oneOf:
         - type: array

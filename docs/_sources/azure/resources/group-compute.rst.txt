@@ -16,6 +16,12 @@ Compute resources
 
    image.rst
 
+   logic-app-workflow.rst
+
+   service-fabric-cluster.rst
+
+   service-fabric-cluster-managed.rst
+
    vm.rst
 
    vmss.rst

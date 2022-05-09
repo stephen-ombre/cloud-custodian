@@ -8,9 +8,13 @@ apigateway resources
    :titlesonly:
 
 
+   apigw-domain-name.rst
+
    rest-account.rst
 
    rest-api.rst
+
+   rest-client-certificate.rst
 
    rest-resource.rst
 
